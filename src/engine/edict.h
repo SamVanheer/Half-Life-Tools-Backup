@@ -5,6 +5,8 @@
 #endif
 #define	MAX_ENT_LEAFS	48
 
+#include "progdefs.h"
+
 struct edict_s
 {
 	qboolean	free;

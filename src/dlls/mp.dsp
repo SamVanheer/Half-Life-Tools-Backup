@@ -26,7 +26,7 @@ CFG=mp - Win32 Release
 # PROP AllowPerConfigDependencies 0
 # PROP Scc_ProjName ""$/SDKSrc/Public/dlls", NVGBAAAA"
 # PROP Scc_LocalPath "."
-CPP=cl.exe
+CPP=xicl6.exe
 MTL=midl.exe
 RSC=rc.exe
 
@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir ".\Releasemp"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /YX /c
-# ADD CPP /nologo /G5 /MT /W3 /GX /Zi /O2 /I "..\engine" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VALVE_DLL" /YX /FD /c
+# ADD CPP /nologo /G5 /MT /W3 /GX /Zi /O2 /I "..\dlls" /I "..\engine" /I "..\common" /I "..\pm_shared" /I "..\\" /I "..\common\gamedb" /I "..\common\persistence" /I "..\common\persistance\sample" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VALVE_DLL" /D "PERSISTENCE_SAMPLE" /YX /FD /c
 # SUBTRACT CPP /Fr
 # ADD BASE MTL /nologo /D "NDEBUG" /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -52,7 +52,7 @@ RSC=rc.exe
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
-LINK32=link.exe
+LINK32=xilink6.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /machine:I386
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /dll /map /debug /machine:I386 /def:".\mp.def"
 # SUBTRACT LINK32 /profile
@@ -80,7 +80,7 @@ SOURCE="$(InputPath)"
 # PROP Intermediate_Dir ".\debugmp"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MTd /W3 /Gm /GX /Zi /Od /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /YX /c
-# ADD CPP /nologo /G5 /MTd /W3 /Gm /GX /ZI /Od /I "..\engine" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "VALVE_DLL" /FR /YX /FD /c
+# ADD CPP /nologo /G5 /MTd /W3 /Gm /GX /ZI /Od /I "..\dlls" /I "..\engine" /I "..\common" /I "..\pm_shared" /I "..\\" /I "..\common\gamedb" /I "..\common\persistence" /I "..\common\persistance\sample" /D "_DEBUG" /D "WIN32" /D "_WINDOWS" /D "VALVE_DLL" /D "PERSISTENCE_SAMPLE" /FR /YX /FD /c
 # ADD BASE MTL /nologo /D "_DEBUG" /win32
 # ADD MTL /nologo /D "_DEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x409 /d "_DEBUG"
@@ -88,7 +88,7 @@ SOURCE="$(InputPath)"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
-LINK32=link.exe
+LINK32=xilink6.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /dll /debug /machine:I386
 # ADD LINK32 user32.lib advapi32.lib /nologo /subsystem:windows /dll /debug /machine:I386 /def:".\mp.def" /implib:".\Debug\mp.lib"
 # SUBTRACT LINK32 /profile
@@ -117,7 +117,7 @@ SOURCE="$(InputPath)"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /G5 /MT /W3 /GX /Zi /O2 /I "..\engine" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "QUIVER" /D "VOXEL" /D "QUAKE2" /D "VALVE_DLL" /YX /c
 # SUBTRACT BASE CPP /Fr
-# ADD CPP /nologo /G5 /MT /W3 /GX /Zi /O2 /I "..\engine" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VALVE_DLL" /YX /FD /c
+# ADD CPP /nologo /G5 /MT /W3 /GX /Zi /O2 /I "..\dlls" /I "..\engine" /I "..\common" /I "..\pm_shared" /I "..\\" /I "..\common\gamedb" /I "..\common\persistence" /I "..\common\persistance\sample" /D "NDEBUG" /D "WIN32" /D "_WINDOWS" /D "VALVE_DLL" /D "PERSISTENCE_SAMPLE" /YX /FD /c
 # SUBTRACT CPP /Fr
 # ADD BASE MTL /nologo /D "NDEBUG" /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
@@ -126,7 +126,7 @@ SOURCE="$(InputPath)"
 BSC32=bscmake.exe
 # ADD BASE BSC32 /nologo
 # ADD BSC32 /nologo
-LINK32=link.exe
+LINK32=xilink6.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /dll /debug /machine:I386 /def:".\mp.def"
 # SUBTRACT BASE LINK32 /profile
 # ADD LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib /nologo /subsystem:windows /dll /profile /debug /machine:I386 /def:".\mp.def"
@@ -243,10 +243,6 @@ SOURCE=.\globals.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=.\glock.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=.\h_ai.cpp
 # End Source File
 # Begin Source File
@@ -271,11 +267,19 @@ SOURCE=.\healthkit.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\wpn_shared\hl_wpn_glock.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\hornet.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=.\hornetgun.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\common\interface.cpp
 # End Source File
 # Begin Source File
 
@@ -311,6 +315,10 @@ SOURCE=.\pathcorner.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=.\persistencehelpers.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=.\plane.cpp
 # End Source File
 # Begin Source File
@@ -320,6 +328,18 @@ SOURCE=.\plats.cpp
 # Begin Source File
 
 SOURCE=.\player.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\pm_shared\pm_debug.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\pm_shared\pm_math.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\pm_shared\pm_shared.c
 # End Source File
 # Begin Source File
 
@@ -492,6 +512,30 @@ SOURCE=.\plane.h
 # Begin Source File
 
 SOURCE=.\player.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\pm_shared\pm_debug.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\pm_shared\pm_defs.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\pm_shared\pm_info.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\pm_shared\pm_materials.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\pm_shared\pm_movevars.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\pm_shared\pm_shared.h
 # End Source File
 # Begin Source File
 

@@ -196,8 +196,6 @@ void CMP5::PrimaryAttack()
 	m_flTimeWeaponIdle = gpGlobals->time + RANDOM_FLOAT ( 10, 15 );
 }
 
-
-
 void CMP5::SecondaryAttack( void )
 {
 	// don't fire underwater

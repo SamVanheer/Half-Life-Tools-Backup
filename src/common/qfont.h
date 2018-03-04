@@ -14,7 +14,9 @@
 ****/
 #if !defined( QFONTH )
 #define QFONTH
+#ifdef _WIN32
 #pragma once
+#endif
 
 // Font stuff
 

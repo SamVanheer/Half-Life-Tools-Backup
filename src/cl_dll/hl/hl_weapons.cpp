@@ -97,6 +97,133 @@ void HUD_PrepEntity( CBaseEntity *pEntity, CBasePlayer *pWeaponOwner )
 }
 
 /*
+// FIXME:  In order to predict animations client side, you'll need to work with the following code.
+//  It's not quite working, but it should be of use if you want
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : *pmodel - 
+//			*label - 
+// Output : int
+//-----------------------------------------------------------------------------
+int LookupSequence( void *pmodel, const char *label )
+{
+	studiohdr_t *pstudiohdr;
+	
+	pstudiohdr = (studiohdr_t *)pmodel;
+	if (! pstudiohdr)
+		return 0;
+
+	mstudioseqdesc_t	*pseqdesc;
+
+	pseqdesc = (mstudioseqdesc_t *)((byte *)pstudiohdr + pstudiohdr->seqindex);
+
+	for (int i = 0; i < pstudiohdr->numseq; i++)
+	{
+		if (stricmp( pseqdesc[i].label, label ) == 0)
+			return i;
+	}
+
+	return -1;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : *label - 
+// Output : int CBaseAnimating :: LookupSequence
+//-----------------------------------------------------------------------------
+int CBaseAnimating :: LookupSequence ( const char *label )
+{
+	cl_entity_t *current;
+
+	current = gEngfuncs.GetLocalPlayer();
+	if ( !current || !current->model )
+		return 0;
+
+	return ::LookupSequence( (studiohdr_t *)IEngineStudio.Mod_Extradata( current->model ), label );
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : *pmodel - 
+//			*pev - 
+//			*pflFrameRate - 
+//			*pflGroundSpeed - 
+//-----------------------------------------------------------------------------
+void GetSequenceInfo( void *pmodel, entvars_t *pev, float *pflFrameRate, float *pflGroundSpeed )
+{
+	studiohdr_t *pstudiohdr;
+	
+	pstudiohdr = (studiohdr_t *)pmodel;
+	if (! pstudiohdr)
+		return;
+
+	mstudioseqdesc_t	*pseqdesc;
+
+	if (pev->sequence >= pstudiohdr->numseq)
+	{
+		*pflFrameRate = 0.0;
+		*pflGroundSpeed = 0.0;
+		return;
+	}
+
+	pseqdesc = (mstudioseqdesc_t *)((byte *)pstudiohdr + pstudiohdr->seqindex) + (int)pev->sequence;
+
+	if (pseqdesc->numframes > 1)
+	{
+		*pflFrameRate = 256 * pseqdesc->fps / (pseqdesc->numframes - 1);
+		*pflGroundSpeed = sqrt( pseqdesc->linearmovement[0]*pseqdesc->linearmovement[0]+ pseqdesc->linearmovement[1]*pseqdesc->linearmovement[1]+ pseqdesc->linearmovement[2]*pseqdesc->linearmovement[2] );
+		*pflGroundSpeed = *pflGroundSpeed * pseqdesc->fps / (pseqdesc->numframes - 1);
+	}
+	else
+	{
+		*pflFrameRate = 256.0;
+		*pflGroundSpeed = 0.0;
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : *pmodel - 
+//			*pev - 
+// Output : int
+//-----------------------------------------------------------------------------
+int GetSequenceFlags( void *pmodel, entvars_t *pev )
+{
+	studiohdr_t *pstudiohdr;
+	
+	pstudiohdr = (studiohdr_t *)pmodel;
+	if ( !pstudiohdr || pev->sequence >= pstudiohdr->numseq )
+		return 0;
+
+	mstudioseqdesc_t	*pseqdesc;
+	pseqdesc = (mstudioseqdesc_t *)((byte *)pstudiohdr + pstudiohdr->seqindex) + (int)pev->sequence;
+
+	return pseqdesc->flags;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : 
+//-----------------------------------------------------------------------------
+void CBaseAnimating :: ResetSequenceInfo ( )
+{
+	cl_entity_t *current;
+
+	current = gEngfuncs.GetLocalPlayer();
+	if ( !current || !current->model )
+		return;
+
+	void *pmodel = (studiohdr_t *)IEngineStudio.Mod_Extradata( current->model );
+
+	GetSequenceInfo( pmodel, pev, &m_flFrameRate, &m_flGroundSpeed );
+	m_fSequenceLoops = ((GetSequenceFlags() & STUDIO_LOOPING) != 0);
+	pev->animtime = gpGlobals->time;
+	pev->framerate = 1.0;
+	m_fSequenceFinished = FALSE;
+	m_flLastEventCheck = gpGlobals->time;
+}
+*/
+/*
 =====================
 CBaseEntity :: Killed
 
@@ -788,6 +915,59 @@ void HUD_WeaponsPostThink( local_state_s *from, local_state_s *to, usercmd_t *cm
 	g_finalstate = NULL;
 }
 
+// For storing predicted sequence and gaitsequence and origin/angles data
+static int g_rseq = 0, g_gaitseq = 0;
+static vec3_t g_clorg, g_clang;
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : *seq - 
+//			*gaitseq - 
+//-----------------------------------------------------------------------------
+void Game_GetSequence( int *seq, int *gaitseq )
+{
+	*seq = g_rseq;
+	*gaitseq = g_gaitseq;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : seq - 
+//			gaitseq - 
+//-----------------------------------------------------------------------------
+void Game_SetSequence( int seq, int gaitseq )
+{
+	g_rseq = seq;
+	g_gaitseq = gaitseq;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : o - 
+//			a - 
+//-----------------------------------------------------------------------------
+void Game_SetOrientation( vec3_t o, vec3_t a )
+{
+	g_clorg = o;
+	g_clang = a;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+// Input  : *o - 
+//			*a - 
+//-----------------------------------------------------------------------------
+void Game_GetOrientation( float *o, float *a )
+{
+	int i;
+	
+	for ( i = 0; i < 3; i++ )
+	{
+		o[ i ] = g_clorg[ i ];
+		a[ i ] = g_clang[ i ];
+	}
+}
+
 /*
 =====================
 HUD_PostRunCmd
@@ -815,6 +995,13 @@ void _DLLEXPORT HUD_PostRunCmd( struct local_state_s *from, struct local_state_s
 #endif
 	{
 		to->client.fov = g_lastFOV;
+	}
+
+	// Store of final sequence, etc. for client side animation
+	if ( g_runfuncs )
+	{
+		Game_SetSequence( to->playerstate.sequence, to->playerstate.gaitsequence );
+		Game_SetOrientation( to->playerstate.origin, cmd->viewangles );
 	}
 
 	// All games can use FOV state

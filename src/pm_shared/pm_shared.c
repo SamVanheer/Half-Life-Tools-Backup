@@ -1966,6 +1966,50 @@ void PM_FixPlayerCrouchStuck( int direction )
 	VectorCopy( test, pmove->origin ); // Failed
 }
 
+void PM_UnDuck( void )
+{
+	int i;
+	pmtrace_t trace;
+	vec3_t newOrigin;
+
+	VectorCopy( pmove->origin, newOrigin );
+
+	if ( pmove->onground != -1 )
+	{
+		for ( i = 0; i < 3; i++ )
+		{
+			newOrigin[i] += ( pmove->player_mins[1][i] - pmove->player_mins[0][i] );
+		}
+	}
+	
+	trace = pmove->PM_PlayerTrace( newOrigin, newOrigin, PM_NORMAL, -1 );
+
+	if ( !trace.startsolid )
+	{
+		pmove->usehull = 0;
+
+		// Oh, no, changing hulls stuck us into something, try unsticking downward first.
+		trace = pmove->PM_PlayerTrace( newOrigin, newOrigin, PM_NORMAL, -1  );
+		if ( trace.startsolid )
+		{
+			// See if we are stuck?  If so, stay ducked with the duck hull until we have a clear spot
+			//Con_Printf( "unstick got stuck\n" );
+			pmove->usehull = 1;
+			return;
+		}
+
+		pmove->flags &= ~FL_DUCKING;
+		pmove->bInDuck  = false;
+		pmove->view_ofs[2] = VEC_VIEW;
+		pmove->flDuckTime = 0;
+		
+		VectorCopy( newOrigin, pmove->origin );
+
+		// Recatagorize position since ducking can change origin
+		PM_CatagorizePosition();
+	}
+}
+
 void PM_Duck( void )
 {
 	int i;
@@ -1987,15 +2031,26 @@ void PM_Duck( void )
 		pmove->oldbuttons &= ~IN_DUCK;
 	}
 
-	if ( pmove->dead )
+	// Prevent ducking if the iuser3 variable is set
+	if ( pmove->iuser3 || pmove->dead )
+	{
+		// Try to unduck
+		if ( pmove->flags & FL_DUCKING )
+		{
+			PM_UnDuck();
+		}
 		return;
+	}
 
-	if ( ( pmove->cmd.buttons & IN_DUCK ) || ( pmove->bInDuck ) || ( pmove->flags & FL_DUCKING ) )
+	if ( pmove->flags & FL_DUCKING )
 	{
 		pmove->cmd.forwardmove *= 0.333;
 		pmove->cmd.sidemove    *= 0.333;
 		pmove->cmd.upmove      *= 0.333;
+	}
 
+	if ( ( pmove->cmd.buttons & IN_DUCK ) || ( pmove->bInDuck ) || ( pmove->flags & FL_DUCKING ) )
+	{
 		if ( pmove->cmd.buttons & IN_DUCK )
 		{
 			if ( (nButtonPressed & IN_DUCK ) && !( pmove->flags & FL_DUCKING ) )
@@ -2044,45 +2099,8 @@ void PM_Duck( void )
 		}
 		else
 		{
-			pmtrace_t trace;
-			vec3_t newOrigin;
-
-			VectorCopy( pmove->origin, newOrigin );
-
-			if ( pmove->onground != -1 )
-			{
-				for ( i = 0; i < 3; i++ )
-				{
-					newOrigin[i] += ( pmove->player_mins[1][i] - pmove->player_mins[0][i] );
-				}
-			}
-			
-			trace = pmove->PM_PlayerTrace( newOrigin, newOrigin, PM_NORMAL, -1 );
-
-			if ( !trace.startsolid )
-			{
-				pmove->usehull = 0;
-
-				// Oh, no, changing hulls stuck us into something, try unsticking downward first.
-				trace = pmove->PM_PlayerTrace( newOrigin, newOrigin, PM_NORMAL, -1  );
-				if ( trace.startsolid )
-				{
-					// See if we are stuck?  If so, stay ducked with the duck hull until we have a clear spot
-					//Con_Printf( "unstick got stuck\n" );
-					pmove->usehull = 1;
-					return;
-				}
-
-				pmove->flags &= ~FL_DUCKING;
-				pmove->bInDuck  = false;
-				pmove->view_ofs[2] = VEC_VIEW;
-				pmove->flDuckTime = 0;
-				
-				VectorCopy( newOrigin, pmove->origin );
-		
-				// Recatagorize position since ducking can change origin
-				PM_CatagorizePosition();
-			}
+			// Try to unduck
+			PM_UnDuck();
 		}
 	}
 }

@@ -49,9 +49,9 @@ struct entity_state_s
 	short		solid;
 	int			effects;
 	float		scale;
-
-	byte		eflags;
 	
+	byte		eflags;
+
 	// Render information
 	int			rendermode;
 	int			renderamt;

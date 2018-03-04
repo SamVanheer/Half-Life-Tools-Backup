@@ -1513,7 +1513,19 @@ void TeamFortressViewport::ShowVGUIMenu( int iMenu )
 	// See if another menu is visible, and if so, cache this one for display once the other one's finished
 	if (m_pCurrentMenu)
 	{
-		m_pCurrentMenu->SetNextMenu( pNewMenu );
+		if ( m_pCurrentMenu->GetMenuID() == MENU_CLASS && iMenu == MENU_TEAM )
+		{
+			CMenuPanel *temp = m_pCurrentMenu;
+			m_pCurrentMenu->Close();
+			m_pCurrentMenu = pNewMenu;
+			m_pCurrentMenu->SetNextMenu( temp );
+			m_pCurrentMenu->Open();
+			UpdateCursorState();
+		}
+		else
+		{
+			m_pCurrentMenu->SetNextMenu( pNewMenu );
+		}
 	}
 	else
 	{

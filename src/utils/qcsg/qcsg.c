@@ -731,7 +731,7 @@ int main (int argc, char **argv)
 	char	name[1024];
 	double		start, end;
 
-	printf( "qcsg.exe v2.7 (%s)\n", __DATE__ );
+	printf( "qcsg.exe v2.8 (%s)\n", __DATE__ );
 	printf ("---- qcsg ----\n" );
 
 	for (i=1 ; i<argc ; i++)
@@ -804,6 +804,7 @@ int main (int argc, char **argv)
 	SetQdirFromPath (argv[i]);
 
 	strcpy (source, ExpandArg (argv[i]));
+	COM_FixSlashes(source);
 	StripExtension (source);
 
 	strcpy (name, ExpandArg (argv[i]));	

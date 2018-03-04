@@ -14,7 +14,7 @@
 #include "scriplib.h"
 #include "polylib.h"
 #include "threads.h"
-#include "bspfile.h"
+#include "bsplib.h"
 
 #include <windows.h>
 
@@ -33,12 +33,16 @@ typedef struct
 	int		inormal[3];
 } plane_t;
 
+
 extern	plane_t	mapplanes[MAX_MAP_PLANES];
 extern	int		nummapplanes;
 
+extern int g_nMapFileVersion;	// map file version * 100 (ie 201), zero for pre-Worldcraft 2.0.1 maps
 
 typedef struct
 {
+	vec3_t	UAxis;
+	vec3_t	VAxis;
 	vec_t	shift[2];
 	vec_t	rotate;
 	vec_t	scale[2];

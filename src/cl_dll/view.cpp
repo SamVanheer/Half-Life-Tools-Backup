@@ -835,6 +835,22 @@ void V_CalcNormalRefdef ( struct ref_params_s *pparams )
 	if ( CL_IsThirdPerson() )
 	{
 		VectorCopy( camAngles, pparams->viewangles);
+		float pitch = camAngles[ 0 ];
+
+		// Normalize angles
+		if ( pitch > 180 ) 
+			pitch -= 360.0;
+		else if ( pitch < -180 )
+			pitch += 360;
+
+		// Player pitch is inverted
+		pitch /= -3.0;
+
+		// Slam local player's pitch value
+		ent->angles[ 0 ] = pitch;
+		ent->curstate.angles[ 0 ] = pitch;
+		ent->prevstate.angles[ 0 ] = pitch;
+		ent->latched.prevangles[ 0 ] = pitch;
 	}
 
 	// override all previous settings if the viewent isn't the client

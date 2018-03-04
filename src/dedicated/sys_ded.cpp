@@ -211,8 +211,8 @@ void Sys_ConsoleOutput (char *string)
 	}
 	UpdateStatus( 1 /* force */ );
 #else
-	printf( string );
-	fflush(stdout);
+	printf( "%s", string );
+	fflush( stdout );
 #endif
 }
 

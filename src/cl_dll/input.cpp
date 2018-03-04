@@ -30,6 +30,8 @@ extern "C"
 	int DLLEXPORT HUD_Key_Event( int eventcode, int keynum, const char *pszCurrentBinding );
 }
 
+extern int g_iAlive;
+
 extern int g_weaponselect;
 extern cl_enginefunc_t gEngfuncs;
 
@@ -686,7 +688,7 @@ void DLLEXPORT CL_CreateMove ( float frametime, struct usercmd_s *cmd, int activ
 	gEngfuncs.GetViewAngles( (float *)viewangles );
 	// Set current view angles.
 
-	if ( gHUD.m_Health.m_iHealth > 0 )
+	if ( g_iAlive )
 	{
 		VectorCopy( viewangles, cmd->viewangles );
 		VectorCopy( viewangles, oldangles );

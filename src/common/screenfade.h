@@ -1,6 +1,8 @@
 #if !defined( SCREENFADEH )
 #define SCREENFADEH
+#ifdef _WIN32
 #pragma once
+#endif
 
 typedef struct screenfade_s
 {

@@ -41,6 +41,7 @@ TeamFortressViewport *gViewPort = NULL;
 void InitInput (void);
 void EV_HookEvents( void );
 void IN_Commands( void );
+
 /*
 ========================== 
     Initialize

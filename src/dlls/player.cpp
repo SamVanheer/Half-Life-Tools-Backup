@@ -843,6 +843,14 @@ void CBasePlayer::Killed( entvars_t *pevAttacker, int iGib )
 {
 	CSound *pSound;
 
+	#ifdef PERSISTENCE_SAMPLE
+		// PERSISTENCE_TODO:
+		// Log other changes to the player's persistence info like this.
+
+		// Update the persistence database.
+		m_PersistenceInfo.IncField_PlayerInfo_NumKills();
+	#endif
+
 	g_pGameRules->PlayerKilled( this, pevAttacker, g_pevLastInflictor );
 
 	if ( m_pTank != NULL )
@@ -861,7 +869,9 @@ void CBasePlayer::Killed( entvars_t *pevAttacker, int iGib )
 	}
 
 	SetAnimation( PLAYER_DIE );
-	
+		
+	m_iRespawnFrames = 0;
+
 	pev->modelindex = g_ulModelIndexPlayer;    // don't use eyes
 
 	pev->deadflag		= DEAD_DYING;
@@ -900,7 +910,6 @@ void CBasePlayer::Killed( entvars_t *pevAttacker, int iGib )
 	if ( ( pev->health < -40 && iGib != GIB_NEVER ) || iGib == GIB_ALWAYS )
 	{
 		pev->solid			= SOLID_NOT;
-
 		GibMonster();	// This clears pev->model
 		pev->effects |= EF_NODRAW;
 		return;
@@ -1532,7 +1541,7 @@ void CBasePlayer::Jump()
 	if ( FBitSet(pev->flags, FL_DUCKING ) || FBitSet(m_afPhysicsFlags, PFLAG_DUCKING) )
 	{
 		if ( m_fLongJump && (pev->button & IN_DUCK) && gpGlobals->time - m_flDuckTime < 1 && pev->velocity.Length() > 50 )
-		{// If jump pressed within a second of duck while moving, long jump!
+		{
 			SetAnimation( PLAYER_SUPERJUMP );
 		}
 	}
@@ -1986,6 +1995,10 @@ void CBasePlayer :: UpdateStepSound( void )
 void CBasePlayer::PreThink(void)
 {
 	int buttonsChanged = (m_afButtonLast ^ pev->button);	// These buttons have changed this frame
+
+	#ifdef PERSISTENCE_SAMPLE
+		m_PersistenceInfo.Update();
+	#endif
 	
 	// Debounced button codes for pressed/released
 	// UNDONE: Do we need auto-repeat?
@@ -2740,6 +2753,7 @@ void CBasePlayer::PostThink()
 		}
 		else if ( m_flFallVelocity > PLAYER_MAX_SAFE_FALL_SPEED )
 		{// after this point, we start doing damage
+			
 			float flFallDamage = g_pGameRules->FlPlayerFallDamage( this );
 
 			if ( flFallDamage > pev->health )
@@ -3059,6 +3073,12 @@ void CBasePlayer::Spawn( void )
 	m_lastx = m_lasty = 0;
 
 	g_pGameRules->PlayerSpawn( this );
+
+	#ifdef PERSISTENCE_SAMPLE
+		// Start getting their persistence data.
+		// (Only does it the first time they spawn).
+		m_PersistenceInfo.StartGettingInfo(g_engfuncs.pfnGetPlayerWONId(pev->pContainingEntity));
+	#endif
 }
 
 
@@ -3968,7 +3988,7 @@ void CBasePlayer::ItemPostFrame()
 	if ( m_pTank != NULL )
 		return;
 
-#if defined( CLIENT_WEAPONS )
+ #if defined( CLIENT_WEAPONS )
     if ( m_flNextAttack > 0 )
 #else
     if ( gpGlobals->time < m_flNextAttack )

@@ -788,7 +788,24 @@ void EV_SpinGauss( event_args_t *args )
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "ambience/pulsemachine.wav", 1.0, ATTN_NORM, iSoundState, pitch );
 }
 
-// FIXME, pass m_fPrimaryFire in as parameter!!!
+/*
+==============================
+EV_StopPreviousGauss
+
+==============================
+*/
+void EV_StopPreviousGauss( int idx )
+{
+	// Make sure we don't have a gauss spin event in the queue for this guy
+	gEngfuncs.pEventAPI->EV_KillEvents( idx, "events/gaussspin.sc" );
+	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_WEAPON, "ambience/pulsemachine.wav" );
+
+	if ( EV_IsLocal( idx ) )
+	{
+		gEngfuncs.pEventAPI->EV_WeaponAnimation( GAUSS_FIRE2, 2 );
+	}
+}
+
 void EV_FireGauss( event_args_t *args )
 {
 	int idx;
@@ -818,6 +835,12 @@ void EV_FireGauss( event_args_t *args )
 	VectorCopy( args->angles, angles );
 	VectorCopy( args->velocity, velocity );
 
+	if ( args->bparam2 )
+	{
+		EV_StopPreviousGauss( idx );
+		return;
+	}
+
 	// Make sure we don't have a gauss spin event in the queue for this guy
 	gEngfuncs.pEventAPI->EV_KillEvents( idx, "events/gaussspin.sc" );
 
@@ -836,8 +859,6 @@ void EV_FireGauss( event_args_t *args )
 		V_PunchAxis( 0, -2.0 );
 		gEngfuncs.pEventAPI->EV_WeaponAnimation( GAUSS_FIRE2, 2 );
 	}
-
-	gEngfuncs.pEventAPI->EV_StopSound( idx, CHAN_WEAPON, "ambience/pulsemachine.wav" );
 
 	gEngfuncs.pEventAPI->EV_PlaySound( idx, origin, CHAN_WEAPON, "weapons/gauss2.wav", 0.5 + flDamage * (1.0 / 400.0), ATTN_NORM, 0, 85 + gEngfuncs.pfnRandomLong( 0, 0x1f ) );
 
