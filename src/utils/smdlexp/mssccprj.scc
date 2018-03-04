@@ -1,4 +1,5 @@
 SCC = This is a Source Code Control file
 
 [smdlexp.mak]
-SCC_Project_Name = "$/HLStandardSDK/SourceCode/utils/smdlexp", TEXHAAAA
+SCC_Aux_Path = "\\Jeeves\VSSCODE\"
+SCC_Project_Name = "$/Sdk/Full/utils/smdlexp", UPYBAAAA

@@ -101,6 +101,10 @@ SOURCE=.\gldraw.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\hullfile.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\map.c
 # End Source File
 # Begin Source File
