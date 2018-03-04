@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1999, 2000 Valve LLC. All rights reserved.
+*	Copyright (c) 1996-2001, Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -25,6 +25,7 @@
 #include	"effects.h"
 #include	"decals.h"
 #include	"soundent.h"
+#include	"game.h"
 
 #define		SQUID_SPRINT_DIST	256 // how close the squid has to get before starting to sprint and refusing to swerve
 
@@ -120,7 +121,7 @@ void CSquidSpit::Shoot( entvars_t *pevOwner, Vector vecStart, Vector vecVelocity
 	pSpit->pev->velocity = vecVelocity;
 	pSpit->pev->owner = ENT(pevOwner);
 
-	pSpit->SetThink ( Animate );
+	pSpit->SetThink ( &CSquidSpit::Animate );
 	pSpit->pev->nextthink = gpGlobals->time + 0.1;
 }
 
@@ -171,7 +172,7 @@ void CSquidSpit :: Touch ( CBaseEntity *pOther )
 		pOther->TakeDamage ( pev, pev, gSkillData.bullsquidDmgSpit, DMG_GENERIC );
 	}
 
-	SetThink ( SUB_Remove );
+	SetThink ( &CSquidSpit::SUB_Remove );
 	pev->nextthink = gpGlobals->time;
 }
 
@@ -604,7 +605,7 @@ void CBullsquid :: HandleAnimEvent( MonsterEvent_t *pEvent )
 
 		case BSQUID_AE_HOP:
 		{
-			float flGravity = CVAR_GET_FLOAT( "sv_gravity" );
+			float flGravity = g_psv_gravity->value;
 
 			// throw the squid up into the air on this frame.
 			if ( FBitSet ( pev->flags, FL_ONGROUND ) )

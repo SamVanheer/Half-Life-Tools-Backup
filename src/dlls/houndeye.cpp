@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1999, 2000 Valve LLC. All rights reserved.
+*	Copyright (c) 1996-2001, Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -25,6 +25,7 @@
 #include	"nodes.h"
 #include	"squadmonster.h"
 #include	"soundent.h"
+#include	"game.h"
 
 extern CGraph WorldGraph;
 
@@ -96,7 +97,7 @@ public:
 	BOOL FValidateHintType ( short sHint );
 	BOOL FCanActiveIdle ( void );
 	Schedule_t *GetScheduleOfType ( int Type );
-	Schedule_t *CHoundeye :: GetSchedule( void );
+	Schedule_t *GetSchedule( void );
 
 	int	Save( CSave &save ); 
 	int Restore( CRestore &restore );
@@ -286,7 +287,7 @@ void CHoundeye :: HandleAnimEvent( MonsterEvent_t *pEvent )
 
 		case HOUND_AE_HOPBACK:
 			{
-				float flGravity = CVAR_GET_FLOAT( "sv_gravity" );
+				float flGravity = g_psv_gravity->value;
 
 				pev->flags &= ~FL_ONGROUND;
 
