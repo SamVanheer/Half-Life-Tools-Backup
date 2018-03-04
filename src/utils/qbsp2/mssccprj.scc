@@ -1,0 +1,7 @@
+SCC = This is a Source Code Control file
+
+[qbsp2.mak]
+SCC_Project_Name = "$/HLStandardSDK/SourceCode/utils/qbsp2", BDXHAAAA
+
+[writebsp.mak]
+SCC_Project_Name = "$/HLStandardSDK/SourceCode/utils/qbsp2", BDXHAAAA

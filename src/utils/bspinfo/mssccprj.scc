@@ -1,0 +1,4 @@
+SCC = This is a Source Code Control file
+
+[bspinfo.mak]
+SCC_Project_Name = "$/HLStandardSDK/SourceCode/utils/bspinfo", NBXHAAAA

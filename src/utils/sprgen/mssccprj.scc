@@ -1,0 +1,4 @@
+SCC = This is a Source Code Control file
+
+[sprgen.mak]
+SCC_Project_Name = "$/HLStandardSDK/SourceCode/utils/sprgen", CFXHAAAA
