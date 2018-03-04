@@ -1,19 +1,12 @@
-/***
-*
-*	Copyright (c) 1996-2002, Valve LLC. All rights reserved.
-*	
-*	This product contains software technology licensed from Id 
-*	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
-*	All Rights Reserved.
-*
-*   This source code contains proprietary and confidential information of
-*   Valve LLC and its suppliers.  Access to this code is restricted to
-*   persons who have executed a written SDK license with Valve.  Any access,
-*   use or distribution of this code by or to any unlicensed person is illegal.
-*
-****/
+//========= Copyright © 1996-2002, Valve LLC, All rights reserved. ============
+//
+// Purpose: New version of the slider bar
+//
+// $NoKeywords: $
+//=============================================================================
+
 //=========================================================
-// Generic Monster - purely for scripted sequence work.
+// playermonster - for scripted sequence use.
 //=========================================================
 #include	"extdll.h"
 #include	"util.h"
@@ -22,13 +15,13 @@
 #include	"schedule.h"
 
 // For holograms, make them not solid so the player can walk through them
-#define	SF_GENERICMONSTER_NOTSOLID					4 
+#define	SF_MONSTERPLAYER_NOTSOLID					4 
 
 //=========================================================
 // Monster's Anim Events Go Here
 //=========================================================
 
-class CGenericMonster : public CBaseMonster
+class CPlayerMonster : public CBaseMonster
 {
 public:
 	void Spawn( void );
@@ -38,13 +31,13 @@ public:
 	void HandleAnimEvent( MonsterEvent_t *pEvent );
 	int ISoundMask ( void );
 };
-LINK_ENTITY_TO_CLASS( monster_generic, CGenericMonster );
+LINK_ENTITY_TO_CLASS( monster_player, CPlayerMonster );
 
 //=========================================================
 // Classify - indicates this monster's place in the 
 // relationship table.
 //=========================================================
-int	CGenericMonster :: Classify ( void )
+int	CPlayerMonster :: Classify ( void )
 {
 	return	CLASS_PLAYER_ALLY;
 }
@@ -53,7 +46,7 @@ int	CGenericMonster :: Classify ( void )
 // SetYawSpeed - allows each sequence to have a different
 // turn rate associated with it.
 //=========================================================
-void CGenericMonster :: SetYawSpeed ( void )
+void CPlayerMonster :: SetYawSpeed ( void )
 {
 	int ys;
 
@@ -71,7 +64,7 @@ void CGenericMonster :: SetYawSpeed ( void )
 // HandleAnimEvent - catches the monster-specific messages
 // that occur when tagged animation frames are played.
 //=========================================================
-void CGenericMonster :: HandleAnimEvent( MonsterEvent_t *pEvent )
+void CPlayerMonster :: HandleAnimEvent( MonsterEvent_t *pEvent )
 {
 	switch( pEvent->event )
 	{
@@ -83,9 +76,9 @@ void CGenericMonster :: HandleAnimEvent( MonsterEvent_t *pEvent )
 }
 
 //=========================================================
-// ISoundMask - generic monster can't hear.
+// ISoundMask - player monster can't hear.
 //=========================================================
-int CGenericMonster :: ISoundMask ( void )
+int CPlayerMonster :: ISoundMask ( void )
 {
 	return	NULL;
 }
@@ -93,23 +86,12 @@ int CGenericMonster :: ISoundMask ( void )
 //=========================================================
 // Spawn
 //=========================================================
-void CGenericMonster :: Spawn()
+void CPlayerMonster :: Spawn()
 {
-	Precache();
+	Precache( );
 
-	SET_MODEL( ENT(pev), STRING(pev->model) );
-
-/*
-	if ( FStrEq( STRING(pev->model), "models/player.mdl" ) )
-		UTIL_SetSize(pev, VEC_HUMAN_HULL_MIN, VEC_HUMAN_HULL_MAX);
-	else
-		UTIL_SetSize(pev, VEC_HULL_MIN, VEC_HULL_MAX);
-*/
-
-	if ( FStrEq( STRING(pev->model), "models/player.mdl" ) || FStrEq( STRING(pev->model), "models/holo.mdl" ) )
-		UTIL_SetSize(pev, VEC_HULL_MIN, VEC_HULL_MAX);
-	else
-		UTIL_SetSize(pev, VEC_HUMAN_HULL_MIN, VEC_HUMAN_HULL_MAX);
+	SET_MODEL(ENT(pev), "models/player.mdl");
+	UTIL_SetSize(pev, VEC_HULL_MIN, VEC_HULL_MAX);
 
 	pev->solid			= SOLID_SLIDEBOX;
 	pev->movetype		= MOVETYPE_STEP;
@@ -118,9 +100,9 @@ void CGenericMonster :: Spawn()
 	m_flFieldOfView		= 0.5;// indicates the width of this monster's forward view cone ( as a dotproduct result )
 	m_MonsterState		= MONSTERSTATE_NONE;
 
-	MonsterInit();
 
-	if ( pev->spawnflags & SF_GENERICMONSTER_NOTSOLID )
+	MonsterInit();
+	if ( pev->spawnflags & SF_MONSTERPLAYER_NOTSOLID )
 	{
 		pev->solid = SOLID_NOT;
 		pev->takedamage = DAMAGE_NO;
@@ -130,9 +112,9 @@ void CGenericMonster :: Spawn()
 //=========================================================
 // Precache - precaches all resources this monster needs
 //=========================================================
-void CGenericMonster :: Precache()
+void CPlayerMonster :: Precache()
 {
-	PRECACHE_MODEL( (char *)STRING(pev->model) );
+	PRECACHE_MODEL("models/player.mdl");
 }	
 
 //=========================================================
