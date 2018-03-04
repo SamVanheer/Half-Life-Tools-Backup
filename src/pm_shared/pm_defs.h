@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1999, 2000 Valve LLC. All rights reserved.
+*	Copyright (c) 1996-2001, Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -84,6 +84,7 @@ typedef struct physent_s
 } physent_t;
 
 typedef struct playermove_s playermove_t;
+
 struct playermove_s
 {
 	int				player_index;  // So we don't try to run the PM_CheckStuck nudging too quickly.

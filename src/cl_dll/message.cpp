@@ -1,6 +1,6 @@
 /***
 *
-*	Copyright (c) 1999, Valve LLC. All rights reserved.
+*	Copyright (c) 1996-2001, Valve LLC. All rights reserved.
 *	
 *	This product contains software technology licensed from Id 
 *	Software, Inc. ("Id Technology").  Id Technology (c) 1996 Id Software, Inc. 
@@ -462,10 +462,11 @@ void CHudMessage::MessageAdd( const char *pName, float time )
 					{
 						return;
 					}
+
 					// get rid of any other messages in same location (only one displays at a time)
-					else if ( abs( tempMessage->y - m_pMessages[j]->y ) < 1 )
+					if ( fabs( tempMessage->y - m_pMessages[j]->y ) < 0.0001 )
 					{
-						if ( abs( tempMessage->x - m_pMessages[j]->x ) < 1 )
+						if ( fabs( tempMessage->x - m_pMessages[j]->x ) < 0.0001 )
 						{
 							m_pMessages[j] = NULL;
 						}

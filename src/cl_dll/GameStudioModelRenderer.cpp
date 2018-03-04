@@ -1,3 +1,10 @@
+//========= Copyright © 1996-2001, Valve LLC, All rights reserved. ============
+//
+// Purpose: 
+//
+// $NoKeywords: $
+//=============================================================================
+
 #include <assert.h>
 #include "hud.h"
 #include "cl_util.h"
@@ -22,7 +29,7 @@
 
 //
 // Override the StudioModelRender virtual member functions here to implement custom bone
-//  setup, blending, etc.
+// setup, blending, etc.
 //
 
 // Global engine <-> studio model rendering code interface
@@ -30,7 +37,6 @@ extern engine_studio_api_t IEngineStudio;
 
 // The renderer object, created on the stack.
 CGameStudioModelRenderer g_StudioRenderer;
-
 /*
 ====================
 CGameStudioModelRenderer
